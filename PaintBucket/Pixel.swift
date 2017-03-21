@@ -26,8 +26,8 @@ struct Pixel {
     }
     
     init(color: UIColor) {
-        let model = CGColorSpaceGetModel(CGColorGetColorSpace(color.CGColor))
-        if model == .Monochrome {
+        let model = color.cgColor.colorSpace?.model
+        if model == .monochrome {
             var white: CGFloat = 0
             var alpha: CGFloat = 0
             color.getWhite(&white, alpha: &alpha)
@@ -35,7 +35,7 @@ struct Pixel {
             self.g = UInt8(white * 255)
             self.b = UInt8(white * 255)
             self.a = UInt8(alpha * 255)
-        } else if model == .RGB {
+        } else if model == .rgb {
             var r: CGFloat = 0
             var g: CGFloat = 0
             var b: CGFloat = 0
@@ -65,15 +65,15 @@ struct Pixel {
         return total
     }
     
-    static func componentDiff(l: UInt8, _ r: UInt8) -> UInt8 {
+    static func componentDiff(_ l: UInt8, _ r: UInt8) -> UInt8 {
         return max(l, r) - min(l, r)
     }
     
-    func multiplyAlpha(alpha: CGFloat) -> Pixel {
+    func multiplyAlpha(_ alpha: CGFloat) -> Pixel {
         return Pixel(self.r, self.g, self.b, UInt8(CGFloat(self.a) * alpha))
     }
     
-    func blend(other: Pixel) -> Pixel {
+    func blend(_ other: Pixel) -> Pixel {
         let a1 = CGFloat(self.a) / 255.0
         let a2 = CGFloat(other.a) / 255.0
 
@@ -85,7 +85,7 @@ struct Pixel {
         )
     }
     
-    func diff(other: Pixel) -> Int {
+    func diff(_ other: Pixel) -> Int {
         let r = Int(Pixel.componentDiff(self.r, other.r))
         let g = Int(Pixel.componentDiff(self.g, other.g))
         let b = Int(Pixel.componentDiff(self.b, other.b))

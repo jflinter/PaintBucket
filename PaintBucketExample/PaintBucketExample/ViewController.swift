@@ -15,10 +15,10 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.orangeColor()
+        self.view.backgroundColor = UIColor.orange
         self.view.addSubview(self.imageView)
-        self.imageView.contentMode = .ScaleAspectFit
-        self.imageView.image = UIImage(named: "benchmark")?.pbk_imageByReplacingColorAt(0, 0, withColor: UIColor.clearColor(), tolerance: 200, antialias: true)
+        self.imageView.contentMode = .scaleAspectFit
+        self.imageView.image = UIImage(named: "benchmark")?.pbk_imageByReplacingColorAt(0, 0, withColor: UIColor.clear, tolerance: 200, antialias: true)
     }
 
     override func viewDidLayoutSubviews() {

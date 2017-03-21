@@ -9,53 +9,53 @@
 import CoreGraphics
 
 class ImageBuffer {
-    let context: CGContextRef
+    let context: CGContext
     let pixelBuffer: UnsafeMutablePointer<UInt32>
     let imageWidth: Int
     let imageHeight: Int
     
-    init(image: CGImageRef) {
-        self.imageWidth = Int(CGImageGetWidth(image))
-        self.imageHeight = Int(CGImageGetHeight(image))
+    init(image: CGImage) {
+        self.imageWidth = Int(image.width)
+        self.imageHeight = Int(image.height)
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         
-        self.context = CGBitmapContextCreate(nil, imageWidth, imageHeight, 8, imageWidth * 4, colorSpace, CGBitmapInfo.ByteOrder32Little.rawValue | CGImageAlphaInfo.PremultipliedFirst.rawValue)!
-        CGContextDrawImage(self.context, CGRectMake(0, 0, CGFloat(imageWidth), CGFloat(imageHeight)), image)
+        self.context = CGContext(data: nil, width: imageWidth, height: imageHeight, bitsPerComponent: 8, bytesPerRow: imageWidth * 4, space: colorSpace, bitmapInfo: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue)!
+        self.context.draw(image, in: CGRect(x: 0, y: 0, width: CGFloat(imageWidth), height: CGFloat(imageHeight)))
         
-        self.pixelBuffer = UnsafeMutablePointer<UInt32>(CGBitmapContextGetData(self.context))
+        self.pixelBuffer = self.context.data!.bindMemory(to: UInt32.self, capacity: imageWidth * imageHeight)
     }
     
-    func indexFrom(x: Int, _ y: Int) -> Int {
+    func indexFrom(_ x: Int, _ y: Int) -> Int {
         return x + (self.imageWidth * y)
     }
     
-    func differenceAtPoint(x: Int, _ y: Int, toPixel pixel: Pixel) -> Int {
+    func differenceAtPoint(_ x: Int, _ y: Int, toPixel pixel: Pixel) -> Int {
         let index = indexFrom(x, y)
         let newPixel = self[index]
         return pixel.diff(newPixel)
     }
     
-    func differenceAtIndex(index: Int, toPixel pixel: Pixel) -> Int {
+    func differenceAtIndex(_ index: Int, toPixel pixel: Pixel) -> Int {
         let newPixel = self[index]
         return pixel.diff(newPixel)
     }
     
-    func scanline_replaceColor(colorPixel: Pixel, startingAtPoint startingPoint: (Int, Int), withColor replacementPixel: Pixel, tolerance: Int, antialias: Bool) {
+    func scanline_replaceColor(_ colorPixel: Pixel, startingAtPoint startingPoint: CGPoint, withColor replacementPixel: Pixel, tolerance: Int, antialias: Bool) {
         
-        func testPixelAtPoint(x: Int, _ y: Int) -> Bool {
+        func testPixelAtPoint(_ x: Int, _ y: Int) -> Bool {
             return differenceAtPoint(x, y, toPixel: colorPixel) <= tolerance
         }
         
-        let seenIndices = NSMutableIndexSet()
-        let indices = NSMutableIndexSet(index: indexFrom(startingPoint))
+        var seenIndices = IndexSet()
+        var indices = IndexSet(integer: indexFrom(Int(startingPoint.x), Int(startingPoint.y)))
         while indices.count > 0 {
-            let index = indices.firstIndex
-            indices.removeIndex(index)
+            let index = indices.first!
+            indices.remove(index)
             
-            if seenIndices.containsIndex(index) {
+            if seenIndices.contains(index) {
                 continue
             }
-            seenIndices.addIndex(index)
+            seenIndices.insert(index)
             
             if differenceAtIndex(index, toPixel: colorPixel) > tolerance {
                 continue
@@ -90,14 +90,14 @@ class ImageBuffer {
             for x in ((minX + 1)...(maxX - 1)) {
                 if y < imageHeight - 1 {
                     let index = indexFrom(x, y + 1)
-                    if !seenIndices.containsIndex(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
-                        indices.addIndex(index)
+                    if !seenIndices.contains(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
+                        indices.insert(index)
                     }
                 }
                 if y > 0 {
                     let index = indexFrom(x, y - 1)
-                    if !seenIndices.containsIndex(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
-                        indices.addIndex(index)
+                    if !seenIndices.contains(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
+                        indices.insert(index)
                     }
                 }
             }
@@ -108,15 +108,15 @@ class ImageBuffer {
     subscript(index: Int) -> Pixel {
         get {
             let pixelIndex = pixelBuffer + index
-            return Pixel(memory: pixelIndex.memory)
+            return Pixel(memory: pixelIndex.pointee)
         }
         set(pixel) {
             self.pixelBuffer[index] = pixel.uInt32Value
         }
     }
     
-    var image: CGImageRef {
-        return CGBitmapContextCreateImage(self.context)!
+    var image: CGImage {
+        return self.context.makeImage()!
     }
     
 }
