@@ -14,15 +14,15 @@ class PaintBucketTests: XCTestCase {
     func benchmarkLargeImagePerformance() {
         let image = UIImage(named: "benchmark", in: Bundle(for: type(of: self)), compatibleWith: nil)!
         measure {
-            image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.clear, tolerance: 70)
+            let _ = image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.clear, tolerance: 70)
         }
     }
     
     func testLargeImage_backgroundThread() {
         let image = UIImage(named: "test", in: Bundle(for: type(of: self)), compatibleWith: nil)!
         let expectation = self.expectation(description: "yay")
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.default).async {
-            image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.clear, tolerance: 70)
+        DispatchQueue.global().async {
+            let _ = image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.clear, tolerance: 70)
             expectation.fulfill()
         }
         waitForExpectations(timeout: 10, handler: nil)

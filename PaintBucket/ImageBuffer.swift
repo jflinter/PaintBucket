@@ -65,6 +65,8 @@ class ImageBuffer {
             let y = index / imageWidth
             var minX = pointX
             var maxX = pointX + 1
+            var maxIndex:Int = index
+            var minIndex:Int = index
             
             while minX >= 0 {
                 let index = indexFrom(minX, y)
@@ -74,6 +76,7 @@ class ImageBuffer {
                 let alphaMultiplier = (tolerance == 0) ? 1 : CGFloat(diff) / CGFloat(tolerance)
                 let newPixel = antialias ? pixel.multiplyAlpha(alphaMultiplier).blend(replacementPixel) : replacementPixel
                 self[index] = newPixel
+                minIndex = index
                 minX -= 1
             }
             while maxX < imageWidth {
@@ -84,20 +87,42 @@ class ImageBuffer {
                 let alphaMultiplier = (tolerance == 0) ? 1 : CGFloat(diff) / CGFloat(tolerance)
                 let newPixel = antialias ? pixel.multiplyAlpha(alphaMultiplier).blend(replacementPixel) : replacementPixel
                 self[index] = newPixel
+                maxIndex = index
                 maxX += 1
             }
+            
+            // If we processed pixels on this scanline beyond the first,
+            // update the indices.
+            if (minIndex < maxIndex) {
+                seenIndices.insert(integersIn: minIndex...maxIndex)
+                indices.remove(integersIn: minIndex...maxIndex)
+            }
+            
+            // Only insert one index per span above or below
+            var insertedAbove = false
+            var insertedBelow = false
             
             for x in ((minX + 1)...(maxX - 1)) {
                 if y < imageHeight - 1 {
                     let index = indexFrom(x, y + 1)
-                    if !seenIndices.contains(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
+                    let withinTolerance = differenceAtIndex(index, toPixel: colorPixel) <= tolerance
+                    if !insertedAbove && !seenIndices.contains(index) && withinTolerance {
                         indices.insert(index)
+                        insertedAbove = true
+                    }
+                    else if insertedAbove && !withinTolerance {
+                        insertedAbove = false
                     }
                 }
                 if y > 0 {
                     let index = indexFrom(x, y - 1)
-                    if !seenIndices.contains(index) && differenceAtIndex(index, toPixel: colorPixel) <= tolerance {
+                    let withinTolerance = differenceAtIndex(index, toPixel: colorPixel) <= tolerance
+                    if !insertedBelow && !seenIndices.contains(index) && withinTolerance {
                         indices.insert(index)
+                        insertedBelow = true
+                    }
+                    else if insertedBelow && !withinTolerance {
+                        insertedBelow = false
                     }
                 }
             }
