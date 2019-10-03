@@ -32,8 +32,8 @@ class PaintBucketTests: XCTestCase {
         let image = UIImage(named: "test", in: Bundle(for: type(of: self)), compatibleWith: nil)!
         let expected = UIImage(named: "test_output", in: Bundle(for: type(of: self)), compatibleWith: nil)!
         let transformed = image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.clear, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -41,8 +41,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder(edgeLength: 4).addColor(.red).addColor(.green).image
         let expected = ImageBuilder(edgeLength: 4).addColor(.blue).addColor(.green).image
         let transformed = image.pbk_imageByReplacingColorAt(0, 0, withColor: UIColor.blue, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -50,8 +50,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder(edgeLength: 5).addColor(.red).addColor(.green).image
         let expected = ImageBuilder(edgeLength: 5).addColor(.red).image
         let transformed = image.pbk_imageByReplacingColorAt(2, 2, withColor: UIColor.red, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -59,8 +59,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder(edgeLength: 9).addColor(.blue).addColor(.green).image
         let expected = ImageBuilder(edgeLength: 9).addColor(.green).image
         let transformed = image.pbk_imageByReplacingColorAt(1, 1, withColor: UIColor.green, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -71,8 +71,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(color1).addColor(color2).image
         let expected = ImageBuilder().addColor(color3).addColor(color2).image
         let transformed = image.pbk_imageByReplacingColorAt(0, 0, withColor: color3, tolerance: 0)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -83,8 +83,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(color1).addColor(color2).image
         let expected = ImageBuilder().addColor(color3).image
         let transformed = image.pbk_imageByReplacingColorAt(0, 0, withColor: color3, tolerance: 2)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -92,8 +92,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(.red).addColor(.green).image
         let expected = ImageBuilder().addColor(.blue).addColor(.green).image
         let transformed = image.pbk_imageByReplacingColorAt(0, 0, withColor: UIColor.blue, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -101,8 +101,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(.red).addColor(.green).image
         let expected = ImageBuilder().addColor(.red).addColor(.blue).image
         let transformed = image.pbk_imageByReplacingColorAt(50, 50, withColor: UIColor.blue, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -110,8 +110,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(.red).addColor(.green).image
         let expected = ImageBuilder().addColor(.blue).addColor(.green).image
         let transformed = image.pbk_imageByReplacingColorAt(10, 40, withColor: UIColor.blue, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     
@@ -119,8 +119,8 @@ class PaintBucketTests: XCTestCase {
         let image = ImageBuilder().addColor(.red).addColor(.green).image
         let expected = ImageBuilder().addColor(.red).addColor(.blue).image
         let transformed = image.pbk_imageByReplacingColorAt(25, 50, withColor: UIColor.blue, tolerance: 100)
-        let data1 = UIImagePNGRepresentation(expected)!
-        let data2 = UIImagePNGRepresentation(transformed)!
+        let data1 = expected.pngData()!
+        let data2 = transformed.pngData()!
         XCTAssert(data1 == data2)
     }
     

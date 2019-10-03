@@ -18,7 +18,7 @@ public extension UIImage {
         let replacementPixel = Pixel(color: withColor)
         imageBuffer.scanline_replaceColor(pixel, startingAtPoint: point, withColor: replacementPixel, tolerance: tolerance, antialias: antialias)
         
-        return UIImage(cgImage: imageBuffer.image, scale: self.scale, orientation: UIImageOrientation.up)
+        return UIImage(cgImage: imageBuffer.image, scale: self.scale, orientation: UIImage.Orientation.up)
     }
     
 }
