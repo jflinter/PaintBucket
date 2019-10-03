@@ -10,7 +10,7 @@ import UIKit
 
 public extension UIImage {
     
-    @objc public func pbk_imageByReplacingColorAt(_ x: Int, _ y: Int, withColor: UIColor, tolerance: Int, antialias: Bool = false) -> UIImage {
+    @objc func pbk_imageByReplacingColorAt(_ x: Int, _ y: Int, withColor: UIColor, tolerance: Int, antialias: Bool = false) -> UIImage {
         let point = (x, y)
         let imageBuffer = ImageBuffer(image: self.cgImage!)
         let index = imageBuffer.indexFrom(x, y)
